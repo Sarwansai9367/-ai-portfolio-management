@@ -1,0 +1,17 @@
+flask
+flask-cors
+yfinance
+pandas
+numpy
+scikit-learn
+scipy
+pymongo
+dnspython
+pytest
+python-dotenv
+flask-socketio
+apscheduler
+alpaca-py
+vaderSentiment
+torch
+PyJWT
