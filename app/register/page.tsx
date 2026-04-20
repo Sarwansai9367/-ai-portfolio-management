@@ -47,8 +47,7 @@ export default function RegisterPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Failed to register');
-        setLoading(false);
+        setError(data.error || data.message || 'Failed to register');
         return;
       }
 
@@ -59,11 +58,15 @@ export default function RegisterPage() {
         password,
       });
 
-      if (!signRes?.error) {
-        router.push('/setup');
+      if (signRes?.error) {
+        setError('Account created, but automatic sign-in failed. Please sign in manually.');
+        return;
       }
+
+      router.push('/setup');
     } catch (e) {
       setError('An error occurred during registration');
+    } finally {
       setLoading(false);
     }
   };

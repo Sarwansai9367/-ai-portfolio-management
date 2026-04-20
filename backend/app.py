@@ -256,52 +256,58 @@ def status():
 
 @app.route('/api/auth/register', methods=['POST'])
 def register_user():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-    name = data.get('name', 'User')
+    try:
+        data = request.json or {}
+        email = data.get('email')
+        password = data.get('password')
+        name = data.get('name', 'User')
 
-    if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+        if not email or not password:
+            return jsonify({"error": "Email and password are required"}), 400
 
-    db = get_db()
-    if db.users.find_one({"email": email}):
-        return jsonify({"error": "Email already registered"}), 400
+        db = get_db()
+        if db.users.find_one({"email": email}):
+            return jsonify({"error": "Email already registered"}), 400
 
-    user_id = os.urandom(12).hex()
-    hashed_password = generate_password_hash(password)
-    
-    db.users.insert_one({
-        "user_id": user_id,
-        "email": email,
-        "name": name,
-        "password": hashed_password
-    })
+        user_id = os.urandom(12).hex()
+        hashed_password = generate_password_hash(password)
+        
+        db.users.insert_one({
+            "user_id": user_id,
+            "email": email,
+            "name": name,
+            "password": hashed_password
+        })
 
-    token = create_token(user_id)
-    return jsonify({"message": "User registered successfully", "token": token, "user": {"id": user_id, "name": name, "email": email}})
+        token = create_token(user_id)
+        return jsonify({"message": "User registered successfully", "token": token, "user": {"id": user_id, "name": name, "email": email}})
+    except Exception as e:
+        return jsonify({"error": f"Registration failed: {str(e)}"}), 503
 
 @app.route('/api/auth/login', methods=['POST'])
 def login_user():
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
+    try:
+        data = request.json or {}
+        email = data.get('email')
+        password = data.get('password')
 
-    if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+        if not email or not password:
+            return jsonify({"error": "Email and password are required"}), 400
 
-    db = get_db()
-    user = db.users.find_one({"email": email})
+        db = get_db()
+        user = db.users.find_one({"email": email})
 
-    if not user or not check_password_hash(user['password'], password):
-        return jsonify({"error": "Invalid email or password"}), 401
+        if not user or not check_password_hash(user['password'], password):
+            return jsonify({"error": "Invalid email or password"}), 401
 
-    token = create_token(user['user_id'])
-    return jsonify({
-        "message": "Login successful", 
-        "token": token, 
-        "user": {"id": user['user_id'], "name": user['name'], "email": user['email']}
-    })
+        token = create_token(user['user_id'])
+        return jsonify({
+            "message": "Login successful", 
+            "token": token, 
+            "user": {"id": user['user_id'], "name": user['name'], "email": user['email']}
+        })
+    except Exception as e:
+        return jsonify({"error": f"Login failed: {str(e)}"}), 503
 
 @app.route('/api/user/setup', methods=['POST'])
 @require_auth

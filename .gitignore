@@ -5,7 +5,6 @@ env/
 venv/
 ENV/
 bin/
-lib/
 include/
 share/
 
@@ -28,10 +27,6 @@ __pycache__/
 .pytest_cache/
 .coverage
 .cache/
-nosetests.xml
-coverage.xml
-*.projects
-*.pyo
 
 # OS
 .DS_Store
@@ -40,9 +35,13 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
-*.swp
-*.swo
+
+# v0 runtime files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+instrumentation-client.js
+instrumentation-client.ts
 
 # Project specific
 backend/result.txt
-backend/.env
